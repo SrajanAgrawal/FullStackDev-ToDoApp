@@ -1,0 +1,54 @@
+Programming language
+
+JS
+Java
+Python
+PHP
+Golang
+other...
+
+Database 
+
+mysql
+mongodb
+postres
+other....
+
+
+two types of using js 
+- module js
+- common js
+
+
+nodemon
+
+
+DB model 
+
+user - collection name
+
+[
+    {
+        "first_name":
+        "last_name":
+        "email"
+        "age"
+        "blood"
+        "mobile"
+        "address"
+    }, 
+   
+]
+
+
+todo - collection name
+
+[
+    {
+        "task" : (type: string),
+        "done" : {
+            type: boolean
+            default: false
+        }
+    }
+]
