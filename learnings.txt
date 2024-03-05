@@ -64,3 +64,9 @@ git push ->
 
 
 Data modelling in Backend  -> 
+
+
+error handling
+
+try catch
+promises (.then.catch)
