@@ -15,6 +15,8 @@ app.use(cors(
 
 app.use(express.urlencoded({ extended: false }));
 
+app.use(express.json()); // to let the express use json syntax.
+
 // Database Connection 
 // mongoose.connect('mongodb://127.0.0.1:27017/test', { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
 //     console.log('db connected successfully')
@@ -42,17 +44,29 @@ app.get('/', (req, res) => {
     res.send('home route changed');
 });
 
+// get all task stored in the databae
 app.get('/api/getAllTask', (req, res) => {
     Task.find().then(result => res.status(200).json(result)).catch(err => res.status(404).json(err))
 })
 
+// add a task given in user's request body
 app.post('/api/addTask', (req, res) => {
+
     const task2 = req.body.task;
+
+    console.log(req.body);
 
     Task.create({
         task: task2
-    }).then(result => res.status(201).json(result)).catch(err => res.status(202).json(err))
+    }).then(result => res.status(201).json(result)).catch((err) => {
+        console.log(task2);
+        res.status(202).json(err);
+    })
 })
+
+
+// edit the task given by it's id
+app.put()
 
 app.listen(port, () => {
     // console.log('server is listening on port' + port);
