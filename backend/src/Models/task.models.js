@@ -4,7 +4,12 @@ const taskSchema = new mongoose.Schema({
     task: {
         type: String,
         required: true
+    },
+    done: {
+        type: Boolean,
+        default: false
     }
+
 }, { timestamps: true })
 // created at & updated at
 

@@ -41,7 +41,9 @@ connectDB();
 const port = process.env.PORT || 3000; // this will read the port from dotenv file
 
 app.get('/', (req, res) => {
-    res.send('home route changed');
+    res.status(200).json({
+        "message": "you are successfully connected to the backend server"
+    })
 });
 
 // get all task stored in the databae
@@ -64,9 +66,33 @@ app.post('/api/addTask', (req, res) => {
     })
 })
 
+// mark the task as completed
+app.put('/api/markCompleted/:id', (req, res) => {
+    const id = req.params.id;
+    console.log(id);
 
-// edit the task given by it's id
-app.put()
+    Task.findByIdAndUpdate({ _id: id }, { done: true }).then(result => res.status(200).json(result)).catch(err => res.status(404).json(err))
+
+})
+
+// update the task as given by user
+app.put('/api/update/:id', (req, res) => {
+    const id = req.params.id;
+    console.log(id);
+
+    const updatedTask = req.body.task;
+    console.log(updatedTask);
+
+    Task.findByIdAndUpdate({ _id: id }, { task: updatedTask }).then(result => res.status(200).json(result)).catch(err => res.status(404).json(err))
+})
+
+// delete the task given by id
+app.delete('/api/deleteTask/:id', (req, res) => {
+    const id = req.params.id;
+    console.log('Deleted Api route ' + id);
+
+    Task.findByIdAndDelete({ _id: id }).then(result => { res.status(200).json(result) }).catch(err => res.status(404).json(err))
+})
 
 app.listen(port, () => {
     // console.log('server is listening on port' + port);
