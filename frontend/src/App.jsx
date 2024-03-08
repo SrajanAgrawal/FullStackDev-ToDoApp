@@ -2,14 +2,17 @@ import './App.css'
 import axios from "axios";
 import { useState, useEffect } from 'react';
 import { BsFillTrashFill, BsCircleFill, BsCircle } from "react-icons/bs";
+import { FaRegEdit } from "react-icons/fa";
 
 function App() {
   // using hooks to store the data
   const [task, setTask] = useState("");
   const [alltask, setAlltask] = useState([]);
 
+  const baseUrl = 'http://localhost:5000/api'
+
   useEffect(() => {
-    axios.get('http://localhost:5000/api/getAllTask').then(async (result) => {
+    axios.get(`${baseUrl}/getAllTask`).then(async (result) => {
       console.log(result);
 
       // result.data.forEach((element) => {
@@ -39,7 +42,7 @@ function App() {
       alert('Task is empty');
     } else {
 
-      axios.post('http://localhost:5000/api/addTask', {
+      axios.post(`${baseUrl}/addTask`, {
         "task": task
       }).then(result => {
         location.reload();
@@ -53,11 +56,37 @@ function App() {
 
   }
 
+  // mark as completed function
+  const handleMarkAsCompleted = async (id) => {
+    await axios.put(`${baseUrl}/markCompleted/${id}`).then(result => {
+      location.reload();
+      console.log(result);
+    }).catch(err => {
+      console.log(`Marking done as true error !! ${err}`);
+    })
+  }
 
-  const handleDeleteTask = (id) => {
-    // e.preventdefault(); 
 
-    axios.delete('http://localhost:5000/api/deleteTask/' + id).then(result => {
+  // edit the task function
+  const handleEditTask = async (id) => {
+
+    const updatedTask = prompt("Enter new task");
+    if (updatedTask != "") {
+      await axios.put(`${baseUrl}/update/${id}`, {
+        "task": updatedTask
+      }).then(result => {
+        location.reload();
+        console.log(result);
+      }).catch(err => console.log(`Edit task error !! ${err}`));
+    }
+
+  }
+
+
+  // delete the task
+  const handleDeleteTask = async (id) => {
+
+    await axios.delete('http://localhost:5000/api/deleteTask/' + id).then(result => {
       location.reload();
       console.log(result);
     }).catch(err => {
@@ -67,41 +96,48 @@ function App() {
 
   return (
     <>
-      <h1>Time is Money</h1>
-      <div>
-        <input type="text" className="input-box" onChange={(e) => {
-          setTask(e.target.value);
-          console.log(task);
-        }} />
-        <button className="btn" onClick={handleAddTask}>Add</button>
+      <h1 className='main-heading'>Time is Money</h1>
+      <div className='input-button'>
+        <div>
+          <input type="text" className="input-box" onChange={(e) => {
+            setTask(e.target.value);
+            console.log(task);
+          }} />
+        </div>
+        <div>
+          <button className="btn" onClick={handleAddTask}>Add</button>
+        </div>
       </div>
 
-      {
-        alltask.length == 0
-          ?
-          <div> No Record </div>
-          :
-          alltask.map((todo, index) => {
-            // console.log(todo);
-            // return <div key={index}>
-            //   <h2>{todo.task}</h2>
-            // </div>;
-            return <div className='todo' key={index}>
-              <div className='checkbox'>
+      <div className='task-container'>
+        {
+          alltask.length == 0
+            ?
+            <div> No Record </div>
+            :
+            alltask.map((todo, index) => {
 
-                {todo.done == true ?
-                  <BsCircleFill className='icon' /> :
-                  <BsCircle className='icon' />}
+              return <div className='todo' key={index}>
 
-                <p className='todo-task'> {todo.task} </p>
+                <div>
+                  {todo.done == true ?
+                    <BsCircleFill className='icon' /> :
+                    <BsCircle className='icon' onClick={() => handleMarkAsCompleted(todo._id)} />}
+                </div>
+                <div className='checkbox'>
+
+
+
+                  <p className='todo-task'> {todo.task} </p>
+                </div>
+                <div >
+                  <FaRegEdit className='icon' onClick={() => handleEditTask(todo._id)} />
+                  <BsFillTrashFill className='icon' onClick={() => handleDeleteTask(todo._id)} />
+                </div>
               </div>
-              <div>
-                <BsFillTrashFill className='icon' onClick={() => handleDeleteTask(todo._id)} />
-              </div>
-            </div>
-          })
-      }
-
+            })
+        }
+      </div>
     </>
   )
 }
